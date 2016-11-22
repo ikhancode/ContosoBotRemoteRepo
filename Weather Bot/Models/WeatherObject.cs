@@ -7,63 +7,46 @@ namespace Weather_Bot.Models
 {
     public class WeatherObject
     {
-        public class Coord
+        public class Rates
         {
-            public double lon { get; set; }
-            public double lat { get; set; }
-        }
-
-        public class Weather
-        {
-            public int id { get; set; }
-            public string main { get; set; }
-            public string description { get; set; }
-            public string icon { get; set; }
-        }
-
-        public class Main
-        {
-            public double temp { get; set; }
-            public int pressure { get; set; }
-            public int humidity { get; set; }
-            public int temp_min { get; set; }
-            public double temp_max { get; set; }
-        }
-
-        public class Wind
-        {
-            public double speed { get; set; }
-            public int deg { get; set; }
-        }
-
-        public class Clouds
-        {
-            public int all { get; set; }
-        }
-
-        public class Sys
-        {
-            public int type { get; set; }
-            public int id { get; set; }
-            public double message { get; set; }
-            public string country { get; set; }
-            public int sunrise { get; set; }
-            public int sunset { get; set; }
+            public double AUD { get; set; }
+            public double BGN { get; set; }
+            public double BRL { get; set; }
+            public double CAD { get; set; }
+            public double CHF { get; set; }
+            public double CNY { get; set; }
+            public double CZK { get; set; }
+            public double DKK { get; set; }
+            public double GBP { get; set; }
+            public double HKD { get; set; }
+            public double HRK { get; set; }
+            public double HUF { get; set; }
+            public double IDR { get; set; }
+            public double ILS { get; set; }
+            public double INR { get; set; }
+            public double JPY { get; set; }
+            public double KRW { get; set; }
+            public double MXN { get; set; }
+            public double MYR { get; set; }
+            public double NOK { get; set; }
+            public double NZD { get; set; }
+            public double PHP { get; set; }
+            public double PLN { get; set; }
+            public double RON { get; set; }
+            public double RUB { get; set; }
+            public double SEK { get; set; }
+            public double SGD { get; set; }
+            public double THB { get; set; }
+            public double TRY { get; set; }
+            public double USD { get; set; }
+            public double ZAR { get; set; }
         }
 
         public class RootObject
         {
-            public Coord coord { get; set; }
-            public List<Weather> weather { get; set; }
             public string @base { get; set; }
-            public Main main { get; set; }
-            public Wind wind { get; set; }
-            public Clouds clouds { get; set; }
-            public int dt { get; set; }
-            public Sys sys { get; set; }
-            public int id { get; set; }
-            public string name { get; set; }
-            public int cod { get; set; }
+            public string date { get; set; }
+            public Rates rates { get; set; }
         }
     }
 }
