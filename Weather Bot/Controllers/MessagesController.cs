@@ -17,13 +17,14 @@ namespace Weather_Bot
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        private string output;
-        private string userInput;
-
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
+   
+        string output;
+        string userInput;
+
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity.Type == ActivityTypes.Message)
@@ -63,7 +64,7 @@ namespace Weather_Bot
 
                 //Implement currency rate here -----------------------------------------------------
 
-                if (userInput.ToLower().Contains("currency rate"))
+                if (userInput.ToLower().Contains("currency for"))
                 {
                     string[] value = userInput.Split(' ');
                     double ZAR = rootObject.rates.ZAR;
@@ -75,34 +76,32 @@ namespace Weather_Bot
                     double JPY = rootObject.rates.JPY;
                     double BGN = rootObject.rates.BGN;
 
-                    if (value[2].ToLower() == "zar") { output = value[2].ToUpper() + " " + ZAR; }
-                    if (value[2].ToLower() == "hkd") { output = value[2].ToUpper() + " " + HKD; }
-                    if (value[2].ToLower() == "aud") { output = value[2].ToUpper() + " " + AUD; }
-                    if (value[2].ToLower() == "usd") { output = value[2].ToUpper() + " " + USD; }
-                    if (value[2].ToLower() == "gbp") { output = value[2].ToUpper() + " " + GBP; }
-                    if (value[2].ToLower() == "cad") { output = value[2].ToUpper() + " " + CAD; }
-                    if (value[2].ToLower() == "jpy") { output = value[2].ToUpper() + " " + JPY; }
-                    if (value[2].ToLower() == "bgn") { output = value[2].ToUpper() + " " + BGN; }    
+                    if (value[2].ToLower() == "zar") { output = ZAR + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "hkd") { output = HKD + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "aud") { output = AUD + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "usd") { output = USD + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "gbp") { output = GBP + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "cad") { output = CAD + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "jpy") { output = JPY + " " + value[2].ToUpper(); }
+                    if (value[2].ToLower() == "bgn") { output = BGN + " " + value[2].ToUpper(); }
 
                     Activity replyToConversation = activity.CreateReply("Rate per NZD is: ");
                     replyToConversation.Recipient = activity.From;
                     replyToConversation.Type = "message";
                     replyToConversation.Attachments = new List<Attachment>();
                     List<CardImage> cardImages = new List<CardImage>();
-                    cardImages.Add(new CardImage(url: "https://<ImageUrl1>"));
-                    cardImages.Add(new CardImage(url: "https://<ImageUrl2>"));
+                    cardImages.Add(new CardImage(url: "https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/441/aiga_cashier-128.png"));
                     List<CardAction> cardButtons = new List<CardAction>();
                     CardAction plButton = new CardAction()
                     {
                         Value = "https://www.google.co.nz/webhp?sourceid=chrome-instant&rlz=1C1CHZL_enNZ703NZ703&ion=1&espv=2&ie=UTF-8#q=Convert+Currency+",
                         Type = "openUrl",
-                        Title = "Google's currency converter"
+                        Title = "Visit Google's currency converter"
                     };
                     cardButtons.Add(plButton);
                     HeroCard plCard = new HeroCard()
                     {
                         Title = output,
-                        Subtitle = "",
                         Images = cardImages,
                         Buttons = cardButtons
                     };
