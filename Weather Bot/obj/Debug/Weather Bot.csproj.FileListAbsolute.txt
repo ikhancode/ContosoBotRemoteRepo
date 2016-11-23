@@ -181,3 +181,51 @@ C:\Users\ikhancode\Desktop\Repo\ContosoBot\Weather Bot\obj\Debug\Weather Bot.csp
 C:\Users\ikhancode\Desktop\Repo\ContosoBot\Weather Bot\obj\Debug\Weather Bot.csprojResolveAssemblyReference.cache
 C:\Users\ikhancode\Desktop\Repo\ContosoBot\Weather Bot\obj\Debug\Bot Application1.dll
 C:\Users\ikhancode\Desktop\Repo\ContosoBot\Weather Bot\obj\Debug\Bot Application1.pdb
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Bot Application1.dll.config
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Bot Application1.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Bot Application1.pdb
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Autofac.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Chronic.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.Bot.Builder.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.Bot.Connector.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.IdentityModel.Protocol.Extensions.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.Rest.ClientRuntime.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.WindowsAzure.Configuration.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.WindowsAzure.Mobile.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.WindowsAzure.Mobile.Ext.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Newtonsoft.Json.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Net.Http.Extensions.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Net.Http.Formatting.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Net.Http.Primitives.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Web.Http.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Web.Http.WebHost.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Autofac.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.Bot.Builder.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.Bot.Connector.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.IdentityModel.Protocol.Extensions.pdb
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.IdentityModel.Protocol.Extensions.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.Rest.ClientRuntime.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.WindowsAzure.Configuration.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.WindowsAzure.Mobile.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Microsoft.WindowsAzure.Mobile.Ext.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\Newtonsoft.Json.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.IdentityModel.Tokens.Jwt.pdb
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.IdentityModel.Tokens.Jwt.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Net.Http.Extensions.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Net.Http.Formatting.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Net.Http.Primitives.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Web.Http.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\System.Web.Http.WebHost.xml
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\ar\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\en\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\es\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\fa\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\fr\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\ja\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\ru\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\bin\zh-hans\Microsoft.Bot.Builder.resources.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\obj\Debug\Weather bot.csproj.App.config
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\obj\Debug\Weather bot.csprojResolveAssemblyReference.cache
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\obj\Debug\Bot Application1.dll
+C:\Users\ikhancode\Desktop\Repo\Contoso Bot\Weather Bot\obj\Debug\Bot Application1.pdb

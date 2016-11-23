@@ -12,29 +12,14 @@ namespace Weather_Bot.DataModels
         [JsonProperty(PropertyName = "Id")]
         public string ID { get; set; }
 
-        [JsonProperty(PropertyName = "anger")]
-        public double Anger { get; set; }
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "contempt")]
-        public double Contempt { get; set; }
+        [JsonProperty(PropertyName = "Cheque")]
+        public string Cheque { get; set; }
 
-        [JsonProperty(PropertyName = "disgust")]
-        public double Disgust { get; set; }
-
-        [JsonProperty(PropertyName = "fear")]
-        public double Fear { get; set; }
-
-        [JsonProperty(PropertyName = "happiness")]
-        public double Happiness { get; set; }
-
-        [JsonProperty(PropertyName = "neutral")]
-        public double Neutral { get; set; }
-
-        [JsonProperty(PropertyName = "sadness")]
-        public double Sadness { get; set; }
-
-        [JsonProperty(PropertyName = "surprise")]
-        public double Surprise { get; set; }
+        [JsonProperty(PropertyName = "Savings")]
+        public string Savings { get; set; }
 
         [JsonProperty(PropertyName = "createdAt")]
         public DateTime Date { get; set; }

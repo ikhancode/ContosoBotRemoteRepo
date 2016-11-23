@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
+
 using Weather_Bot.Models;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
@@ -14,29 +15,30 @@ using Weather_Bot;
 using System.Web;
 using Weather_Bot.DataModels;
 
-namespace Weather_Bot
+namespace CoBAI
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
         private string endOutput;
         private string userMessage;
-        public string result;
-        public bool currency = false;
+        public string conv;
+        public bool currConverts = false;
 
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
-        
+      
+
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+
             if (activity.Type == ActivityTypes.Message)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
                 StateClient stateClient = activity.GetStateClient();
                 BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
-
 
                 string StockRateString;
                 RootObject StLUIS = await GetEntityFromLUIS(activity.Text);
@@ -44,11 +46,10 @@ namespace Weather_Bot
                 {
                     switch (StLUIS.intents[0].intent)
                     {
-                        case "convert to aud": //convert to aud
-                            currency = true;
-                            StockRateString = await GetConversion(StLUIS.entities[0].entity);
+                        case "convertaud":
+                            currConverts = true;
+                            StockRateString = await getCurr(StLUIS.entities[0].entity);
                             break;
-
                         default:
                             StockRateString = "Sorry, I am not getting you...";
                             break;
@@ -59,7 +60,7 @@ namespace Weather_Bot
                     StockRateString = "Sorry, I am not getting you...";
                 }
 
-                if (currency == true)
+                if (currConverts == true)
                 {
                     Activity replyToConversation = activity.CreateReply("The current exchange rate for this country compared to $1 NZD is:");
                     replyToConversation.Recipient = activity.From;
@@ -67,17 +68,18 @@ namespace Weather_Bot
                     replyToConversation.Attachments = new List<Attachment>();
                     List<CardImage> cardImages = new List<CardImage>();
                     cardImages.Add(new CardImage(url: "https://<ImageUrl1>"));
+                    cardImages.Add(new CardImage(url: "https://<ImageUrl2>"));
                     List<CardAction> cardButtons = new List<CardAction>();
                     CardAction plButton = new CardAction()
                     {
-                        Value = "https://www.google.co.nz/webhp?sourceid=chrome-instant&rlz=1C1CHZL_enNZ703NZ703&ion=1&espv=2&ie=UTF-8#q=Currency+converter",
+                        Value = "http://www.xe.com/currencyconverter/",
                         Type = "openUrl",
                         Title = "Click here for a converter."
                     };
                     cardButtons.Add(plButton);
                     HeroCard plCard = new HeroCard()
                     {
-                        Title = result,
+                        Title = conv,
                         Subtitle = "",
                         Images = cardImages,
                         Buttons = cardButtons
@@ -87,11 +89,10 @@ namespace Weather_Bot
                     var reply1 = await connector.Conversations.SendToConversationAsync(replyToConversation);
                 }
 
-                string endOutput = "Hello";
+                endOutput = "Hello, this is CoBAI";
                 if (userData.GetProperty<bool>("SentGreeting"))
                 {
                     endOutput = "Hello again";
-
                 }
 
                 else
@@ -100,20 +101,16 @@ namespace Weather_Bot
                     await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
                 }
 
-
-
-                bool isBankRequest = true;
+                bool isRequest = true;
                 var userMessage = activity.Text;
 
                 if (userMessage.ToLower().Contains("clear"))
                 {
                     endOutput = "User data cleared";
                     await stateClient.BotState.DeleteStateForUserAsync(activity.ChannelId, activity.From.Id);
-                    isBankRequest = false;
-
+                    isRequest = false;
                 }
-
-                if (userMessage.ToLower().Contains("bank"))
+                if (userMessage.ToLower().Equals("bank"))
                 {
                     Activity replyToConversation = activity.CreateReply("Visit Bank");
                     replyToConversation.Recipient = activity.From;
@@ -151,7 +148,7 @@ namespace Weather_Bot
                     {
                         endOutput += "[" + t.Date + "] People: " + t.Name + ", Balance " + t.Cheque + "\n\n";
                     }
-                    isBankRequest = false;
+                    isRequest = false;
 
                 }
 
@@ -159,25 +156,72 @@ namespace Weather_Bot
                 {
                     Timeline timeline = new Timeline()
                     {
-                        Name = "muzamil",
-                        Cheque = "8888",
-                        Savings = "9999",
+                        Name = "muzamil khan",
+                        Cheque = "99999",
+                        Savings = "88888",
                         Date = DateTime.Now
                     };
 
                     await AzureManager.AzureManagerInstance.AddTimeline(timeline);
 
-                    isBankRequest = false;
+                    isRequest = false;
 
                     endOutput = "New timeline added [" + timeline.Date + "]";
                 }
 
+
+                //if (userMessage.ToLower().Contains("currency rate"))
+                //{
+                //    string[] value = userMessage.Split(' ');
+                //    double AUD = rootObject.rates.AUD;
+                //    double BGN = rootObject.rates.BGN;
+                //    double CAD = rootObject.rates.CAD;
+                //    double GBP = rootObject.rates.GBP;
+                //    double HKD = rootObject.rates.HKD;
+                //    double JPY = rootObject.rates.JPY;
+                //    double USD = rootObject.rates.USD;
+                //    double ZAR = rootObject.rates.ZAR;
+
+                //    if (value[2].ToLower() == "zar") { conv = ZAR + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "hkd") { conv = HKD + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "aud") { conv = AUD + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "usd") { conv = USD + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "gbp") { conv = GBP + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "cad") { conv = CAD + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "jpy") { conv = JPY + " " + value[2].ToUpper(); }
+                //    if (value[2].ToLower() == "bgn") { conv = BGN + " " + value[2].ToUpper(); }
+
+
+                //    Activity replyToConversation = activity.CreateReply("The current exchange rate for this country compared to $1 NZD is:");
+                //    replyToConversation.Recipient = activity.From;
+                //    replyToConversation.Type = "message";
+                //    replyToConversation.Attachments = new List<Attachment>();
+                //    List<CardImage> cardImages = new List<CardImage>();
+                //    cardImages.Add(new CardImage(url: "https://<ImageUrl1>"));
+                //    cardImages.Add(new CardImage(url: "https://<ImageUrl2>"));
+                //    List<CardAction> cardButtons = new List<CardAction>();
+                //    CardAction plButton = new CardAction()
+                //    {
+                //        Value = "https://www.google.co.nz/webhp?sourceid=chrome-instant&rlz=1C1CHZL_enNZ703NZ703&ion=1&espv=2&ie=UTF-8#q=Currency+converter",
+                //        Type = "openUrl",
+                //        Title = "Use the online converter"
+                //    };
+                //    cardButtons.Add(plButton);
+                //    HeroCard plCard = new HeroCard()
+                //    {
+                //        Title = conv,
+                //        Subtitle = "",
+                //        Images = cardImages,
+                //        Buttons = cardButtons
+                //    };
+                //    Attachment plAttachment = plCard.ToAttachment();
+                //    replyToConversation.Attachments.Add(plAttachment);
+                //    var reply1 = await connector.Conversations.SendToConversationAsync(replyToConversation);
+                //}
+
                 Activity reply = activity.CreateReply(endOutput);
                 await connector.Conversations.ReplyToActivityAsync(reply);
                 return Request.CreateResponse(HttpStatusCode.OK);
-
-
-
             }
             else
             {
@@ -214,6 +258,7 @@ namespace Weather_Bot
             {
             }
 
+
             return null;
         }
         private static async Task<RootObject> GetEntityFromLUIS(string Query)
@@ -223,7 +268,6 @@ namespace Weather_Bot
             using (HttpClient client = new HttpClient())
             {
                 string RequestURI = "https://api.projectoxford.ai/luis/v2.0/apps/78b7f8a7-fed1-49ff-9787-18d8ef429a94?subscription-key=0c37e86de7cc480089cb3bb4c19db133&q=" + Query + "&verbose=true";
-                //string RequestURI = "https://api.projectoxford.ai/luis/v2.0/apps/3b8aa6d8-e0b8-40a9-9ca7-2b1e002e63be?subscription-key=edefe3e05c914f71bbf5d2b2fe74648a&q=" + Query + "&verbose=true";
                 HttpResponseMessage msg = await client.GetAsync(RequestURI);
 
                 if (msg.IsSuccessStatusCode)
@@ -233,36 +277,36 @@ namespace Weather_Bot
                 }
             }
             return Data;
-
         }
 
-        private async Task<string> GetConversion(string StockSymbol)
+        private async Task<string> getCurr(string StockSymbol)
         {
             WeatherObject.RootObject rootObject;
             HttpClient client = new HttpClient();
-            string x = await client.GetStringAsync(new Uri("http://api.fixer.io/latest?base=NZD"));
+            string rr = await client.GetStringAsync(new Uri("http://api.fixer.io/latest?base=NZD"));
+            rootObject = JsonConvert.DeserializeObject<WeatherObject.RootObject>(rr);
 
-            rootObject = JsonConvert.DeserializeObject<WeatherObject.RootObject>(x);
-
-            double ZAR = rootObject.rates.ZAR;
-            double HKD = rootObject.rates.HKD;
             double AUD = rootObject.rates.AUD;
-            double USD = rootObject.rates.USD;
-            double GBP = rootObject.rates.GBP;
-            double CAD = rootObject.rates.CAD;
-            double JPY = rootObject.rates.JPY;
             double BGN = rootObject.rates.BGN;
+            double CAD = rootObject.rates.CAD;
+            double GBP = rootObject.rates.GBP;
+            double HKD = rootObject.rates.HKD;
+            double JPY = rootObject.rates.JPY;
+            double USD = rootObject.rates.USD;
+            double ZAR = rootObject.rates.ZAR;
 
-            if (StockSymbol.ToLower() == "zar") { result = ZAR + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "hkd") { result = HKD + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "aud") { result = AUD + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "usd") { result = USD + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "gbp") { result = GBP + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "cad") { result = CAD + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "jpy") { result = JPY + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "bgn") { result = BGN + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "zar") { conv = ZAR + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "hkd") { conv = HKD + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "aud") { conv = AUD + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "usd") { conv = USD + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "gbp") { conv = GBP + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "cad") { conv = CAD + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "jpy") { conv = JPY + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "bgn") { conv = BGN + " " + StockSymbol.ToUpper(); }
 
-            return result;
+            return conv;
+
+
         }
     }
 }
