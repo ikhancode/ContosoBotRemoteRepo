@@ -72,7 +72,7 @@ namespace Weather_Bot
                     {
                         Value = "https://www.google.co.nz/webhp?sourceid=chrome-instant&rlz=1C1CHZL_enNZ703NZ703&ion=1&espv=2&ie=UTF-8#q=Currency+converter",
                         Type = "openUrl",
-                        Title = "Click here for a converter."
+                        Title = "Online converter"
                     };
                     cardButtons.Add(plButton);
                     HeroCard plCard = new HeroCard()
@@ -100,16 +100,14 @@ namespace Weather_Bot
                     await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
                 }
 
-
-
-                bool isBankRequest = true;
+                bool requested = true;
                 var userMessage = activity.Text;
 
                 if (userMessage.ToLower().Contains("clear"))
                 {
                     endOutput = "User data cleared";
                     await stateClient.BotState.DeleteStateForUserAsync(activity.ChannelId, activity.From.Id);
-                    isBankRequest = false;
+                    requested = false;
 
                 }
 
@@ -151,7 +149,7 @@ namespace Weather_Bot
                     {
                         endOutput += "[" + t.Date + "] People: " + t.Name + ", Balance " + t.Cheque + "\n\n";
                     }
-                    isBankRequest = false;
+                    requested = false;
 
                 }
 
@@ -167,7 +165,7 @@ namespace Weather_Bot
 
                     await AzureManager.AzureManagerInstance.AddTimeline(timeline);
 
-                    isBankRequest = false;
+                    requested = false;
 
                     endOutput = "New timeline added [" + timeline.Date + "]";
                 }
@@ -175,9 +173,6 @@ namespace Weather_Bot
                 Activity reply = activity.CreateReply(endOutput);
                 await connector.Conversations.ReplyToActivityAsync(reply);
                 return Request.CreateResponse(HttpStatusCode.OK);
-
-
-
             }
             else
             {
@@ -223,7 +218,6 @@ namespace Weather_Bot
             using (HttpClient client = new HttpClient())
             {
                 string RequestURI = "https://api.projectoxford.ai/luis/v2.0/apps/78b7f8a7-fed1-49ff-9787-18d8ef429a94?subscription-key=0c37e86de7cc480089cb3bb4c19db133&q=" + Query + "&verbose=true";
-                //string RequestURI = "https://api.projectoxford.ai/luis/v2.0/apps/3b8aa6d8-e0b8-40a9-9ca7-2b1e002e63be?subscription-key=edefe3e05c914f71bbf5d2b2fe74648a&q=" + Query + "&verbose=true";
                 HttpResponseMessage msg = await client.GetAsync(RequestURI);
 
                 if (msg.IsSuccessStatusCode)
