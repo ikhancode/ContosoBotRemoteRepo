@@ -164,7 +164,7 @@ namespace CoBAI_Bot
                     {
                         if (activity.From.Name.Equals(t.RealName))
                         {
-                            endOutput += "UserName: " + t.Name + ", Cheque " + t.Cheque + "\n\n" + " Savings: " + t.Savings + "\n\n";
+                            endOutput += "CONTOSO BANK \n\n" + "UserName: " + t.Name + "\n\n" + ", Cheque " + t.Cheque + "\n\n" + " Savings: " + t.Savings + "\n\n";
                         }
                     }
                     requested = false;
