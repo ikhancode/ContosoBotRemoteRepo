@@ -78,7 +78,7 @@ namespace CoBAI_Bot
 
                 if (currency == true)
                 {
-                    Activity replyToConversation = activity.CreateReply("The exchange rate for $1 NZD is $" + result);
+                    Activity replyToConversation = activity.CreateReply("The exchange rate for $1 NZD is " + result);
                     replyToConversation.Recipient = activity.From;
                     replyToConversation.Type = "message";
                     replyToConversation.Attachments = new List<Attachment>();
