@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using Microsoft.Bot.Connector;
-using Newtonsoft.Json;
-using Weather_Bot.Models;
-using System.Collections.Generic;
-using System.Web.UI.WebControls;
-using Weather_Bot;
 using System.Web;
-using Weather_Bot.DataModels;
+using System.Linq;
+using CoBAI_Bot;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Web.Http;
+using CoBAI_Bot.Models;
+using CoBAI_Bot.DataModels;
+using System.Threading.Tasks;
+using Microsoft.Bot.Connector;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Web.Http.Description;
 
-namespace Weather_Bot
+namespace CoBAI_Bot
 {
     [BotAuthentication]
     public class MessagesController : ApiController
@@ -215,7 +215,7 @@ namespace Weather_Bot
 
                     requested = false;
 
-                    endOutput = "New timeline added [" + timeline.Date + "]";
+                    endOutput = "New account added [" + timeline.Date + "]";
                 }
 
                 Activity crtReply = activity.CreateReply(endOutput);
@@ -252,11 +252,11 @@ namespace Weather_Bot
 
         private async Task<string> GetConversion(string StockSymbol)
         {
-            WeatherObject.RootObject rootObject;
+            CurrencyObject.RootObject rootObject;
             HttpClient client = new HttpClient();
             string x = await client.GetStringAsync(new Uri("http://api.fixer.io/latest?base=NZD"));
 
-            rootObject = JsonConvert.DeserializeObject<WeatherObject.RootObject>(x);
+            rootObject = JsonConvert.DeserializeObject<CurrencyObject.RootObject>(x);
 
             double ZAR = rootObject.rates.ZAR;
             double HKD = rootObject.rates.HKD;

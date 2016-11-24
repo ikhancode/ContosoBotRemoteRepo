@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Weather_Bot.Models
+namespace CoBAI_Bot.Models
 {
-    public class WeatherObject
+    public class CurrencyObject
     {
         public class Rates
         {

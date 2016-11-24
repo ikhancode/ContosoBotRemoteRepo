@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Weather_Bot.DataModels
+namespace CoBAI_Bot.DataModels
 {
     public class Timeline
     {

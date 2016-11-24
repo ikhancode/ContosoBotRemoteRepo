@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 
-namespace Weather_Bot
+namespace CoBAI_Bot
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

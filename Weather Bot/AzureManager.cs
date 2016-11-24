@@ -1,12 +1,12 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
-using Weather_Bot.DataModels;
+using CoBAI_Bot.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Weather_Bot
+namespace CoBAI_Bot
 {
     public class AzureManager
     {

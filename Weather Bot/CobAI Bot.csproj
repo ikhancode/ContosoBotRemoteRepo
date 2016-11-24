@@ -142,7 +142,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Luis.cs" />
-    <Compile Include="Models\WeatherObject.cs" />
+    <Compile Include="Models\CurrencyObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
