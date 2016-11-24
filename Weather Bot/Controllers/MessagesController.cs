@@ -20,16 +20,10 @@ namespace CoBAI_Bot
     public class MessagesController : ApiController
     {
         private string endOutput;
-        //private string userMessage;
         public string result;
         public bool currency = false;
         public bool info = false;
 
-        /// <summary>
-        /// POST: api/Messages
-        /// Receive a message from a user and reply to it
-        /// </summary>
-        
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity.Type == ActivityTypes.Message)
@@ -39,12 +33,19 @@ namespace CoBAI_Bot
                 BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
 
                 string endOutput = "Hello";
+                var userMessage = activity.Text;
 
                 if (userData.GetProperty<bool>("SentGreeting"))
                 {
-                    endOutput = "Hello again";
+                    if (userMessage.ToLower().Contains("hello"))
+                    {
+                        endOutput = "Hello again";
+                    }
+                    else
+                    {
+                        endOutput = "Hmmm.. I'm not sure what you meant..Please refer to our website to know more about CoBAI";
+                    }
                 }
-
                 else
                 {
                     userData.SetProperty<bool>("SentGreeting", true);
@@ -52,7 +53,6 @@ namespace CoBAI_Bot
                 }
 
                 bool requested = true;
-                var userMessage = activity.Text;
                 string StockRateString;
                 RootObject StLUIS = await GetEntityFromLUIS(activity.Text);
                 if (StLUIS.intents.Count() > 0)
@@ -67,7 +67,7 @@ namespace CoBAI_Bot
                             currency = true;
                             StockRateString = await GetConversion(StLUIS.entities[0].entity);
                             break;
-                        case "bank info": 
+                        case "bank info":
                             info = true;
                             break;
                         default:
@@ -75,31 +75,25 @@ namespace CoBAI_Bot
                             break;
                     }
                 }
-                else
-                {
-                    StockRateString = "Sorry, I am not getting you...";
-                }
 
                 if (currency == true)
                 {
-                    Activity replyToConversation = activity.CreateReply("The exchange rate for $1 NZD is:");
+                    Activity replyToConversation = activity.CreateReply("The exchange rate for $1 NZD is " + result);
                     replyToConversation.Recipient = activity.From;
                     replyToConversation.Type = "message";
                     replyToConversation.Attachments = new List<Attachment>();
                     List<CardImage> cardImages = new List<CardImage>();
-                    cardImages.Add(new CardImage(url: "https://<ImageUrl1>"));
+                    cardImages.Add(new CardImage(url: "https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/441/aiga_cashier-512.png"));
                     List<CardAction> cardButtons = new List<CardAction>();
                     CardAction plButton = new CardAction()
                     {
                         Value = "https://www.google.co.nz/webhp?sourceid=chrome-instant&rlz=1C1CHZL_enNZ703NZ703&ion=1&espv=2&ie=UTF-8#q=Currency+converter",
                         Type = "openUrl",
-                        Title = "Online converter"
+                        Title = "Use Converter"
                     };
                     cardButtons.Add(plButton);
                     HeroCard plCard = new HeroCard()
                     {
-                        Title = result,
-                        Subtitle = "",
                         Images = cardImages,
                         Buttons = cardButtons
                     };
@@ -111,23 +105,22 @@ namespace CoBAI_Bot
                 }
                 else if (info == true)
                 {
-                    Activity replyToConversation = activity.CreateReply("Visit Bank");
+                    Activity replyToConversation = activity.CreateReply("Visit our website for all the information you need");
                     replyToConversation.Recipient = activity.From;
                     replyToConversation.Type = "message";
                     replyToConversation.Attachments = new List<Attachment>();
                     List<CardImage> cardImages = new List<CardImage>();
-                    cardImages.Add(new CardImage(url: "https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/441/aiga_cashier-128.png"));
+                    cardImages.Add(new CardImage(url: "https://s13.postimg.org/ajz1l9ll3/logggo.png"));
                     List<CardAction> cardButtons = new List<CardAction>();
                     CardAction plButton = new CardAction()
                     {
                         Value = "https://bancocontoso.azurewebsites.net/",
                         Type = "openUrl",
-                        Title = "Bank website"
+                        Title = "Contoso Bank"
                     };
                     cardButtons.Add(plButton);
-                    ThumbnailCard plCard = new ThumbnailCard()
+                    HeroCard plCard = new HeroCard()
                     {
-                        Title = "Visit Bank",
                         Images = cardImages,
                         Buttons = cardButtons
                     };
@@ -163,7 +156,7 @@ namespace CoBAI_Bot
 
                 }
 
-                if (userMessage.ToLower().Contains ("get my records"))
+                if (userMessage.ToLower().Contains("get my records"))
                 {
                     List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
                     endOutput = "";
@@ -175,7 +168,7 @@ namespace CoBAI_Bot
                         }
                     }
                     requested = false;
-                    
+
                 }
 
                 if (userMessage.ToLower().Contains("update name to"))
@@ -198,6 +191,7 @@ namespace CoBAI_Bot
 
                 if (userMessage.ToLower().Contains("add account"))
                 {
+                    requested = true;
                     var userInfo = userMessage.Split(' ');
                     var nickName = userInfo[2];
                     var cheque = userInfo[3];
@@ -213,8 +207,6 @@ namespace CoBAI_Bot
 
                     await AzureManager.AzureManagerInstance.AddTimeline(timeline);
 
-                    requested = false;
-
                     endOutput = "New account added [" + timeline.Date + "]";
                 }
 
@@ -222,11 +214,6 @@ namespace CoBAI_Bot
                 await connector.Conversations.ReplyToActivityAsync(crtReply);
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
-            else
-            {
-                HandleSystemMessage(activity);
-            }
-
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
         }
@@ -267,11 +254,11 @@ namespace CoBAI_Bot
             double JPY = rootObject.rates.JPY;
             double BGN = rootObject.rates.BGN;
 
-            if (StockSymbol.ToLower() == "zar") { result = ZAR + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "zar") { result = ZAR + " in " + StockSymbol.ToUpper(); }
             if (StockSymbol.ToLower() == "hkd") { result = HKD + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "aud") { result = AUD + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "aud") { result = AUD + " in  " + StockSymbol.ToUpper(); }
             if (StockSymbol.ToLower() == "usd") { result = USD + " " + StockSymbol.ToUpper(); }
-            if (StockSymbol.ToLower() == "gbp") { result = GBP + " " + StockSymbol.ToUpper(); }
+            if (StockSymbol.ToLower() == "gbp") { result = GBP + " in  " + StockSymbol.ToUpper(); }
             if (StockSymbol.ToLower() == "cad") { result = CAD + " " + StockSymbol.ToUpper(); }
             if (StockSymbol.ToLower() == "jpy") { result = JPY + " " + StockSymbol.ToUpper(); }
             if (StockSymbol.ToLower() == "bgn") { result = BGN + " " + StockSymbol.ToUpper(); }
