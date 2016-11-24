@@ -164,7 +164,7 @@ namespace CoBAI_Bot
                     {
                         if (activity.From.Name.Equals(t.RealName))
                         {
-                            endOutput += "Username: " + t.Name + ", Cheque " + t.Cheque + "\n\n" + " Savings: " + t.Savings + "\n\n";
+                            endOutput += "UserName: " + t.Name + ", Cheque " + t.Cheque + "\n\n" + " Savings: " + t.Savings + "\n\n";
                         }
                     }
                     requested = false;
