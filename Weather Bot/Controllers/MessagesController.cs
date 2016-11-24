@@ -20,7 +20,7 @@ namespace Weather_Bot
     public class MessagesController : ApiController
     {
         private string endOutput;
-        private string userMessage;
+        //private string userMessage;
         public string result;
         public bool currency = false;
 
@@ -37,7 +37,21 @@ namespace Weather_Bot
                 StateClient stateClient = activity.GetStateClient();
                 BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
 
+                string endOutput = "Hello";
 
+                if (userData.GetProperty<bool>("SentGreeting"))
+                {
+                    endOutput = "Hello again";
+                }
+
+                else
+                {
+                    userData.SetProperty<bool>("SentGreeting", true);
+                    await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
+                }
+
+                bool requested = true;
+                var userMessage = activity.Text;
                 string StockRateString;
                 RootObject StLUIS = await GetEntityFromLUIS(activity.Text);
                 if (StLUIS.intents.Count() > 0)
@@ -58,10 +72,10 @@ namespace Weather_Bot
                 {
                     StockRateString = "Sorry, I am not getting you...";
                 }
-
+                //CONVERSION Start #######################################################################################
                 if (currency == true)
                 {
-                    Activity replyToConversation = activity.CreateReply("The current exchange rate for this country compared to $1 NZD is:");
+                    Activity replyToConversation = activity.CreateReply("The exchange rate for $1 NZD is:");
                     replyToConversation.Recipient = activity.From;
                     replyToConversation.Type = "message";
                     replyToConversation.Attachments = new List<Attachment>();
@@ -84,24 +98,12 @@ namespace Weather_Bot
                     };
                     Attachment plAttachment = plCard.ToAttachment();
                     replyToConversation.Attachments.Add(plAttachment);
-                    var reply1 = await connector.Conversations.SendToConversationAsync(replyToConversation);
-                }
-
-                string endOutput = "Hello";
-                if (userData.GetProperty<bool>("SentGreeting"))
-                {
-                    endOutput = "Hello again";
+                    var replyToConv = await connector.Conversations.SendToConversationAsync(replyToConversation);
+                    return Request.CreateResponse(HttpStatusCode.OK);
 
                 }
 
-                else
-                {
-                    userData.SetProperty<bool>("SentGreeting", true);
-                    await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
-                }
-
-                bool requested = true;
-                var userMessage = activity.Text;
+                //CONVERSION END #######################################################################################
 
                 if (userMessage.ToLower().Contains("clear"))
                 {
@@ -141,25 +143,68 @@ namespace Weather_Bot
 
                 }
 
-                if (userMessage.ToLower().Equals("get timelines"))
+                if (userMessage.ToLower().Contains("delete my records"))
+                {
+
+                    List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
+                    foreach (Timeline t in timelines)
+                    {
+                        if (activity.From.Name.Equals(t.RealName))
+                        {
+                            await AzureManager.AzureManagerInstance.DeleteTimeline(t);
+                        }
+                    }
+                    Activity repl = activity.CreateReply("It's deleted!");
+                    await connector.Conversations.ReplyToActivityAsync(repl);
+                    return Request.CreateResponse(HttpStatusCode.OK);
+
+                }
+
+                if (userMessage.ToLower().Contains ("get my records"))
                 {
                     List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
                     endOutput = "";
                     foreach (Timeline t in timelines)
                     {
-                        endOutput += "[" + t.Date + "] People: " + t.Name + ", Balance " + t.Cheque + "\n\n";
+                        if (activity.From.Name.Equals(t.RealName))
+                        {
+                            endOutput += "[" + t.Date + "] People: " + t.Name + ", Balance " + t.Cheque + "\n\n";
+                        }
                     }
                     requested = false;
-
+                    
                 }
 
-                if (userMessage.ToLower().Equals("new timeline"))
+                if (userMessage.ToLower().Contains("update name to"))
                 {
+                    var name = userMessage.Split(' ');
+                    List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
+                    endOutput = "";
+                    foreach (Timeline t in timelines)
+                    {
+                        if (activity.From.Name.Contains(t.RealName))
+                        {
+                            t.Name = name[3];
+                            await AzureManager.AzureManagerInstance.UpdateTimeline(t);
+                        }
+                    }
+                    Activity repl = activity.CreateReply("It's updated!");
+                    await connector.Conversations.ReplyToActivityAsync(repl);
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+
+                if (userMessage.ToLower().Contains("add account"))
+                {
+                    var userInfo = userMessage.Split(' ');
+                    var nickName = userInfo[2];
+                    var cheque = userInfo[3];
+                    var savings = userInfo[4];
                     Timeline timeline = new Timeline()
                     {
-                        Name = "muzamil",
-                        Cheque = "8888",
-                        Savings = "9999",
+                        RealName = activity.From.Name,
+                        Name = nickName,
+                        Cheque = cheque,
+                        Savings = savings,
                         Date = DateTime.Now
                     };
 
@@ -170,8 +215,8 @@ namespace Weather_Bot
                     endOutput = "New timeline added [" + timeline.Date + "]";
                 }
 
-                Activity reply = activity.CreateReply(endOutput);
-                await connector.Conversations.ReplyToActivityAsync(reply);
+                Activity crtReply = activity.CreateReply(endOutput);
+                await connector.Conversations.ReplyToActivityAsync(crtReply);
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             else
@@ -258,5 +303,6 @@ namespace Weather_Bot
 
             return result;
         }
+    
     }
 }

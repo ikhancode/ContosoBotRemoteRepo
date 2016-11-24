@@ -29,5 +29,8 @@ namespace Weather_Bot.DataModels
 
         [JsonProperty(PropertyName = "lon")]
         public double Lon { get; set; }
+
+        [JsonProperty(PropertyName = "RealName")]
+        public string RealName { get; set; }
     }
 }
