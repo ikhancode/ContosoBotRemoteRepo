@@ -19,11 +19,29 @@ namespace CoBAI_Bot
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        private string endOutput;
+        private string output;
         public string result;
         public bool currency = false;
         public bool info = false;
 
+        private static async Task<RootObject> GetEntityFromLUIS(string Query)
+        {
+            Query = Uri.EscapeDataString(Query);
+            RootObject Data = new RootObject();
+            using (HttpClient client = new HttpClient())
+            {
+                string RequestURI = "https://api.projectoxford.ai/luis/v2.0/apps/78b7f8a7-fed1-49ff-9787-18d8ef429a94?subscription-key=0c37e86de7cc480089cb3bb4c19db133&q=" + Query + "&verbose=true";
+                HttpResponseMessage msg = await client.GetAsync(RequestURI);
+
+                if (msg.IsSuccessStatusCode)
+                {
+                    var JsonDataResponse = await msg.Content.ReadAsStringAsync();
+                    Data = JsonConvert.DeserializeObject<RootObject>(JsonDataResponse);
+                }
+            }
+            return Data;
+
+        }
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity.Type == ActivityTypes.Message)
@@ -32,18 +50,18 @@ namespace CoBAI_Bot
                 StateClient stateClient = activity.GetStateClient();
                 BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
 
-                string endOutput = "Hello";
-                var userMessage = activity.Text;
+                string output = "Hello";
+                var userInput = activity.Text;
 
                 if (userData.GetProperty<bool>("SentGreeting"))
                 {
-                    if (userMessage.ToLower().Contains("hello"))
+                    if (userInput.ToLower().Contains("hello"))
                     {
-                        endOutput = "Hello again";
+                        output = "Hello again";
                     }
                     else
                     {
-                        endOutput = "Hmmm.. I'm not sure what you meant..Please refer to our website to know more about CoBAI";
+                        output = "Hmmm.. I'm not sure what you meant..Please refer to our website to know more about CoBAI";
                     }
                 }
                 else
@@ -53,25 +71,25 @@ namespace CoBAI_Bot
                 }
 
                 bool requested = true;
-                string StockRateString;
-                RootObject StLUIS = await GetEntityFromLUIS(activity.Text);
-                if (StLUIS.intents.Count() > 0)
+                string luisEntityVal;
+                RootObject luisEntity = await GetEntityFromLUIS(activity.Text);
+                if (luisEntity.intents.Count() > 0)
                 {
-                    switch (StLUIS.intents[0].intent)
+                    switch (luisEntity.intents[0].intent)
                     {
-                        case "convert to aud":
-                            currency = true;
-                            StockRateString = await GetConversion(StLUIS.entities[0].entity);
-                            break;
                         case "convert to gbp":
                             currency = true;
-                            StockRateString = await GetConversion(StLUIS.entities[0].entity);
+                            luisEntityVal = await GetConversion(luisEntity.entities[0].entity);
+                            break;
+                        case "convert to aud":
+                            currency = true;
+                            luisEntityVal = await GetConversion(luisEntity.entities[0].entity);
                             break;
                         case "bank info":
                             info = true;
                             break;
                         default:
-                            StockRateString = "Sorry, I am not getting you...";
+                            luisEntityVal = "Sorry, I am not getting you...";
                             break;
                     }
                 }
@@ -131,15 +149,15 @@ namespace CoBAI_Bot
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
 
-                if (userMessage.ToLower().Contains("clear"))
+                if (userInput.ToLower().Contains("clear"))
                 {
-                    endOutput = "User data cleared";
+                    output = "User data cleared";
                     await stateClient.BotState.DeleteStateForUserAsync(activity.ChannelId, activity.From.Id);
                     requested = false;
 
                 }
 
-                if (userMessage.ToLower().Contains("delete my records"))
+                if (userInput.ToLower().Contains("delete my records"))
                 {
 
                     List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
@@ -156,26 +174,26 @@ namespace CoBAI_Bot
 
                 }
 
-                if (userMessage.ToLower().Contains("get my records"))
+                if (userInput.ToLower().Contains("get my records"))
                 {
                     List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
-                    endOutput = "";
+                    output = "";
                     foreach (Timeline t in timelines)
                     {
                         if (activity.From.Name.Equals(t.RealName))
                         {
-                            endOutput += "CONTOSO BANK \n\n" + "UserName: " + t.Name + "\n\n" + "Cheque " + t.Cheque + "\n\n" + " Savings: " + t.Savings + "\n\n";
+                            output += "CONTOSO BANK \n\n" + "UserName: " + t.Name + "\n\n" + "Cheque " + t.Cheque + "\n\n" + " Savings: " + t.Savings + "\n\n";
                         }
                     }
                     requested = false;
 
                 }
 
-                if (userMessage.ToLower().Contains("update name to"))
+                if (userInput.ToLower().Contains("update name to"))
                 {
-                    var name = userMessage.Split(' ');
+                    var name = userInput.Split(' ');
                     List<Timeline> timelines = await AzureManager.AzureManagerInstance.GetTimelines();
-                    endOutput = "";
+                    output = "";
                     foreach (Timeline t in timelines)
                     {
                         if (activity.From.Name.Contains(t.RealName))
@@ -189,10 +207,10 @@ namespace CoBAI_Bot
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
 
-                if (userMessage.ToLower().Contains("add account"))
+                if (userInput.ToLower().Contains("add account"))
                 {
                     requested = true;
-                    var userInfo = userMessage.Split(' ');
+                    var userInfo = userInput.Split(' ');
                     var nickName = userInfo[2];
                     var cheque = userInfo[3];
                     var savings = userInfo[4];
@@ -207,10 +225,10 @@ namespace CoBAI_Bot
 
                     await AzureManager.AzureManagerInstance.AddTimeline(timeline);
 
-                    endOutput = "New account added [" + timeline.Date + "]";
+                    output = "New account added [" + timeline.Date + "]";
                 }
 
-                Activity crtReply = activity.CreateReply(endOutput);
+                Activity crtReply = activity.CreateReply(output);
                 await connector.Conversations.ReplyToActivityAsync(crtReply);
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
@@ -218,32 +236,13 @@ namespace CoBAI_Bot
             return response;
         }
 
-        private static async Task<RootObject> GetEntityFromLUIS(string Query)
-        {
-            Query = Uri.EscapeDataString(Query);
-            RootObject Data = new RootObject();
-            using (HttpClient client = new HttpClient())
-            {
-                string RequestURI = "https://api.projectoxford.ai/luis/v2.0/apps/78b7f8a7-fed1-49ff-9787-18d8ef429a94?subscription-key=0c37e86de7cc480089cb3bb4c19db133&q=" + Query + "&verbose=true";
-                HttpResponseMessage msg = await client.GetAsync(RequestURI);
-
-                if (msg.IsSuccessStatusCode)
-                {
-                    var JsonDataResponse = await msg.Content.ReadAsStringAsync();
-                    Data = JsonConvert.DeserializeObject<RootObject>(JsonDataResponse);
-                }
-            }
-            return Data;
-
-        }
-
         private async Task<string> GetConversion(string StockSymbol)
         {
             CurrencyObject.RootObject rootObject;
             HttpClient client = new HttpClient();
-            string x = await client.GetStringAsync(new Uri("http://api.fixer.io/latest?base=NZD"));
+            string apiReq = await client.GetStringAsync(new Uri("http://api.fixer.io/latest?base=NZD"));
 
-            rootObject = JsonConvert.DeserializeObject<CurrencyObject.RootObject>(x);
+            rootObject = JsonConvert.DeserializeObject<CurrencyObject.RootObject>(apiReq);
 
             double ZAR = rootObject.rates.ZAR;
             double HKD = rootObject.rates.HKD;
