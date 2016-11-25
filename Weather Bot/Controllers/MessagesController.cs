@@ -107,7 +107,7 @@ namespace CoBAI_Bot
                     {
                         Value = "https://www.google.co.nz/webhp?sourceid=chrome-instant&rlz=1C1CHZL_enNZ703NZ703&ion=1&espv=2&ie=UTF-8#q=Currency+converter",
                         Type = "openUrl",
-                        Title = "Use Converter"
+                        Title = "Use Converter "
                     };
                     cardButtons.Add(plButton);
                     HeroCard plCard = new HeroCard()
